@@ -40,7 +40,6 @@ public class PuzzleCreator {
      * Generate a random 64 bit key that can be used to form a DES key. The
      * final 48 bits are zeroed.
      * @return The generated bits in an array of 8 bytes
-     * @throws NoSuchAlgorithmException
      */
     public byte[] createRandomKey() {
         byte[] key = new byte[8];
@@ -63,7 +62,6 @@ public class PuzzleCreator {
      * @param key The key used for encryption
      * @param puzzle The puzzle to be encrypted
      * @return The encrypted puzzle
-     * @throws Exception
      */
     public byte[] encryptPuzzle(byte[] key, Puzzle puzzle) {
         byte[] encryptedPuzzle = new byte[32];
@@ -86,39 +84,52 @@ public class PuzzleCreator {
      */
     public void encryptPuzzlesToFile(String fn) {
         // steps:
-        // Generate 4096 puzzles (ArrayList)
-        // Read all data and push to array list
-        // encrypt each puzzle
-        // write to file
+        // Read in 26 bytes
+        // Create puzzle with correct puzzle number and key
+        // encrypt puzzle
+        // write encrypted puzzle to file
 
+        int numPuzzles = 4096;
+        ArrayList<Puzzle> puzzles = new ArrayList<>(numPuzzles);
         String outputFile = "outputPuzzles.bin";
-        int allPuzzlesAsBytes = 4096;
-        byte [] puzzleBuffer = new byte[26];
-        byte [] keyBuffer = new byte[8];
 
         try {
             InputStream inStream = new FileInputStream(fn);
-            OutputStream outStream = new FileOutputStream(outputFile);
+            OutputStream outStream = new FileOutputStream(outputFile, true);
 
-            byte [] buffer = new byte[allPuzzlesAsBytes];
-            byte [] encryptedPuzzle = new byte[32];
+            // Read 32 bytes at a time
+            byte [] buffer = new byte[32];
 
-            int bytesRead = -1;
+            // First 16 bytes = 0 = plaintext
+            // 2 Bytes = puzzle number
+            // 8 bytes = key
+            byte [] puzzleBuffer = new byte[16];
+            byte [] puzzleNumberBuffer = new byte[2];
+            byte [] keyBuffer = new byte[14];
+
+            byte [] encryptedPuzzle;
+
+            // Current puzzle being read
             Puzzle curPuzzle;
-            int puzzleNum = 1;
-            while ((bytesRead = inStream.read(buffer)) != 1) {
+
+            while (inStream.read(buffer) != -1) {
                 int j = 0;
-                for(int i=0; i < 32; i++) {
-                    if(i<26) {
+                int k = 0;
+                for(int i=0; i < 26; i++) {
+                    if(i<16) {
                         puzzleBuffer[i] = buffer[i];
-                    } else {
-                        keyBuffer[j] = buffer[j];
+                    } else if(i<18) {
+                        puzzleNumberBuffer[j] = buffer[i];
                         j++;
+                    } else {
+                        keyBuffer[k] = buffer[i];
+                        k++;
                     }
                 }
-                curPuzzle = new Puzzle(puzzleNum, cl.createKey(keyBuffer));
+                curPuzzle = new Puzzle(cl.byteArrayToSmallInt(puzzleNumberBuffer),
+                        cl.createKey(keyBuffer));
                 encryptedPuzzle = encryptPuzzle(keyBuffer, curPuzzle);
-                outStream.write(encryptedPuzzle);
+
                 outStream.write(encryptedPuzzle);
             }
         }

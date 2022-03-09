@@ -7,6 +7,6 @@ public class Main {
         PuzzleCreator pz = new PuzzleCreator();
         ArrayList<Puzzle> puzzle = pz.createPuzzles();
         System.out.println(puzzle.size());
-
+        pz.encryptPuzzlesToFile("puzzles.bin");
     }
 }
