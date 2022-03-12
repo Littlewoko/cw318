@@ -5,6 +5,7 @@ public class Puzzle {
     private SecretKey secretKey;
     private int puzzleNumber;
     private byte[] puzzleAsBytes;
+    public byte [] keyAsBytes;
     final static int PLAIN_TEXT_LENGTH = 16;
     final static int KEY_LENGTH = 8;
 
@@ -20,6 +21,14 @@ public class Puzzle {
         this.secretKey = secretKey;
         puzzleAsBytes = new byte[26];
         initPuzzleAsBytes();
+    }
+
+    public void setKeyAsBytes(byte [] key) {
+        keyAsBytes = key;
+    }
+
+    public byte[] getKeyAsBytes() {
+        return this.keyAsBytes;
     }
 
     public int getPuzzleNumber() {
