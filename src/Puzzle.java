@@ -1,5 +1,10 @@
 import javax.crypto.SecretKey;
 
+/**
+ * Puzzle object class
+ * @author Bradley Cain Watkins
+ * @author 980321
+ */
 public class Puzzle {
     private CryptoLib cl;
     private SecretKey secretKey;

@@ -1,12 +1,15 @@
-import java.io.*;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import java.io.FileOutputStream;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 
-import javax.crypto.*;
-
+/**
+ * Contains methods that allow you to create, encrypt and write puzzles to a
+ * file
+ * @author Bradley Cain Watkins
+ * @author 980321
+ */
 public class PuzzleCreator {
     private static Cipher cipher;
     private ArrayList<Puzzle> puzzles;
@@ -16,8 +19,8 @@ public class PuzzleCreator {
     }
 
     /**
-     * Generate 4096 puzzles
-     * @return An array list consisting of 4096 puzzle objects
+     * Generate and store 4096 puzzles
+     * @return An array list consisting of the 4096 generated puzzle objects
      */
     public ArrayList<Puzzle> createPuzzles() {
         int numPuzzles = 4096;
@@ -38,8 +41,7 @@ public class PuzzleCreator {
     }
 
     /**
-     * Generate a random 64 bit key that can be used to form a DES key. The
-     * final 48 bits are zeroed.
+     * Generate a random 64 bit key that can be used to form a DES key.
      * @return The generated bits in an array of 8 bytes
      */
     public byte[] createRandomKey() {
